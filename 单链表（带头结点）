@@ -81,14 +81,14 @@ LinkList List_HeadInsert(LinkList& L, int nums[], int n)
 
 /*3、尾插法创建单链表 LinkList ListInsert(LinkList & L, int i; int e)*/
 //尾插法建立单链表(这里用的是数组整体导入的方式)
-bool List_TailInsert(LinkList &L, int nums[], int e)
+bool List_TailInsert(LinkList &L, int nums[], int n)
 {
 	L = (LNode*)malloc(sizeof(LNode));	//头结点
 	if (L == NULL) return false;
 	L->next = NULL;
 	LNode* node = L;	//尾指针
 
-	for (int i = 0; i < e; i++)
+	for (int i = 0; i < n; i++)
 	{
 		LNode* newNode = (LNode*)malloc(sizeof(LNode));
 		if (newNode == NULL) return false;
