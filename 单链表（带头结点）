@@ -132,9 +132,8 @@ LNode * LocateElem(LinkList L, int e)
 bool ListDelete(LinkList &L, int i, int &e)
 {
 	if (i<1 || i>Length(L)) return false;	//i值不合法
-	LNode* p;	//动的指针p
+	LNode* p = L;	//动的指针p，从头结点开始
 	int j = 0;	//记录p指向的是第几个结点，头结点是第0个
-	p = L;	//p从头结点开始
 	while (p != NULL && j < i - 1)	//找到第 i-1 个结点
 	{
 		p = p->next;
@@ -143,7 +142,7 @@ bool ListDelete(LinkList &L, int i, int &e)
 	if (p == NULL) return false;	//p值不合法
 	if (p->next == NULL) return false;	//p结点后面没有结点
 	LNode* q = p->next;	//定义一个指针q来指向要删除的结点
-	e = q->next->data;	//用e来存储要删除的数据
+	e = q->data;	//用e来存储要删除的数据
 	p->next = q->next;	//p指针指向要删除的下一位，将q从链表中断开
 	free(q);	//释放结点q
 	return true;
@@ -152,9 +151,9 @@ bool ListDelete(LinkList &L, int i, int &e)
 /*7、在链表的第i个位置插入元素e ListInsert(LinkList &L, int i, int e)*/
 bool ListInsert(LinkList &L, int i, int e)
 {
-	if (i < 0 || i>Length(L)) return false;
+	if (i < 1 || i>Length(L)+1) return false;
 	LNode* p = L->next;
-	for (int j = 0; j < i - 1; i++)
+	for (int j = 0; j < i - 1; j++)
 	{
 		p = p->next;
 	}
@@ -289,27 +288,35 @@ int main() {
 	printf("\n在链表指定位置插入新元素：\n");
 	ListInsert(L, 1, 999);
 	print(L);
+	printf("\n");
 	ListInsert(L, 4, 888);
 	print(L);
+	printf("\n");
 	ListInsert(L, Length(L), 777);
 	print(L);
+	printf("\n");
 
 	// 删除链表指定位置的元素
 	printf("\n删除链表指定位置的元素：\n");
 	int e;
 	ListDelete(L, 1, e);
 	print(L);
+	printf("\n");
 	ListDelete(L, 3, e);
 	print(L);
+	printf("\n");
 	ListDelete(L, Length(L), e);
 	print(L);
+	printf("\n");
 
 	// 删除链表中指定值的结点，注意只会删除第一个值为它的结点
 	printf("\n删除链表中指定值的元素：\n");
 	DeleteFirstElem(L, 33);
 	print(L);
+	printf("\n");
 	DeleteFirstElem(L, 777);
 	print(L);
+	printf("\n");
 
 	// 删除链表中所有等于指定值的结点
 	printf("\n删除链表中所有等于指定值的节点：\n");
@@ -318,6 +325,7 @@ int main() {
 	List_TailInsert(L, nums3, n3);
 	DeleteAllElem(L, 11);
 	print(L);
+	printf("\n");
 
 	// 链表的长度
 	printf("\n链表的长度：\n");
