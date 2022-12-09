@@ -9,7 +9,6 @@
 #define _CRT_SECURE_NO_WARNINGS	//作用：防止scanf函数使用时出错。为了避免每次的写入，具体操作见 https://blog.csdn.net/qq_62181562/article/details/123884361
 #include <stdio.h>
 #include <malloc.h>
-#include <windows.h>	
 
 typedef struct LNode {	//定义单链表结点类型
 	int data;	//数据域
