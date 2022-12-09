@@ -1,0 +1,355 @@
+#define _CRT_SECURE_NO_WARNINGS
+//以下是基于带头结点的单链表！！！
+
+#include <stdio.h>
+#include <malloc.h>
+#include <windows.h>
+
+typedef struct LNode {	//定义单链表结点类型
+	int data;	//数据域
+	struct LNode* next;	//指针域
+}LNode, * LinkList;	//LNode * 强调这是一个结点；LinkList 强调这是一个链表
+
+/*1、初始化 2、头插法建立单链表 3、尾插法创建单链表 4、查找单链表中第 i 个结点 5、查找的单链表中等于指定值ele的结点
+6、删除单链表中指定 i 位置的元素，并且返回该元素 7、删除单链表中第一个数据值为 ele 的元素 8、删除单链表中所有数据值为 ele 的元素
+9、计算单链表的长度 10、判断单链表是否为空 11、清空单链表 12、打印单链表所有节点 */
+
+/*1、初始化bool InitList(LinkList & L) or bool InitList(LNode * &L)*/
+//纯C：void init(LNode **list) 纯C没有bool类型，同时没有&，只能用双指针
+bool InitList(LinkList &L)
+{
+	L = (LNode*)malloc(sizeof(LNode));	//分配一个头结点
+	if (L == NULL)	//内存不足，分配失败（每一个malloc后面都应该有这个）
+		return true;
+	L->next = NULL;	//头结点之后暂时没有结点
+	return true;
+}
+
+/*9、计算单链表的长度Length(LinkList L)*/
+int changdu(LinkList L)
+{
+	int i = 0;
+	LNode* p = L->next;
+	for (int j = 0; p != NULL; j++)
+	{
+		p = p->next;
+		i++;
+	}
+	return i;
+}
+
+/*2、头插法建立单链表 LinkList List_HeadInsert(LinkList & L) or LinkList List_HeadInsert(LNode * &L)*/
+LinkList List_HeadInsert(LinkList & L)	//逆向建立单链表
+{
+	LNode* s;
+	int x;
+	L = (LinkList)malloc(sizeof(LNode));	//创建头结点
+	scanf("%d", &x);
+	while (x != 9999)
+	{
+		s = (LNode*)malloc(sizeof(LNode));
+		s->data = x;
+		s->next = L->next;
+		L->next = s;
+		scanf("%d", &x);
+	}
+	return L;
+}
+
+//OR
+
+//未初始化链表L，数据数组nums，数组长度n
+LinkList List_HeadInsert(LinkList& L, int nums[], int n)
+{
+	L = (LNode*)malloc(sizeof(LNode));
+	L->next = NULL;
+
+	for (int i = 0; i < n; i++)
+	{
+		LNode* newNode = (LNode*)malloc(sizeof(newNode));
+		newNode->data = nums[i];
+		newNode->next = L->next;
+		L->next = newNode;
+	}
+	return L;
+}
+
+/*3、尾插法创建单链表 LinkList ListInsert(LinkList & L, int i; int e)*/
+////在第 i 个位置后插入元素e
+//bool ListInsert(LinkList& L, int i, int e)
+//{
+//	if (i < 1)
+//		return false;
+//	LNode* p;	//指针p指向当前扫描到的结点
+//	int j = 0;	//当前p指向的是第几个结点
+//	p = L;	//L指向头结点，头结点是第0个结点（不存数据）
+//	while (p != NULL && j < i - 1)	//循环到第 i-1 个结点
+//	{
+//		p = p->next;
+//		j++;
+//	}
+//	if (p == NULL)	//i值不合法
+//		return false;
+//	LNode* s = (LNode*)malloc(sizeof(LNode));
+//	if (s == NULL) return false;
+//	s->data = e;
+//	s->next = p->next;
+//	p->next = s;
+//	return true;
+//}
+
+//OR
+
+//尾插法建立单链表
+bool List_TailInsert(LinkList &L, int nums[], int n)
+{
+	L = (LNode*)malloc(sizeof(LNode));	//头结点
+	if (L == NULL) return false;
+	L->next = NULL;
+	LNode* node = L;	//尾指针
+
+	for (int i = 0; i < n; i++)
+	{
+		LNode* newNode = (LNode*)malloc(sizeof(LNode));
+		if (newNode == NULL) return false;
+		newNode->data = nums[i];
+		newNode->next = NULL;
+
+		node->next = newNode;
+		node = newNode;
+	}
+	return true;
+}
+
+/*4、按位查找（查找单链表中第 i 个结点）GetElem(L, i)*/
+LNode * GetElem(LinkList L, int i)	//查找的是结点的值，所以用LNode
+{
+	if (i<1 || i>changdu(L)) return NULL;
+	LNode* p;		//指针p，当前指向指针
+	int j = 0;		//标注当前指针p指向的第几个结点
+	p = L;		//p从头结点开始
+	while (p != NULL && j < i)	//找到第i个结点
+	{
+		p = p->next;
+		j++;
+	}
+	return p;
+}
+
+/*5、按值查找（查找的单链表中等于指定值e的结点）LocateElem(LinkList L, ElemType e)*/
+LNode * LocateElem(LinkList L, int e)
+{
+	LNode* p = L->next;		//定义一个指针p指向头结点的下一结点
+	while (p != NULL && p->data != e)
+	{
+		p = p->next;
+	}
+	return p;	//找到后返回该结点，否则返回NULL
+}
+
+/*6、删除单链表中指定 i 位置的元素，并且返回该元素*/
+bool ListDelete(LinkList &L, int i, int &e)
+{
+	if (i<1 || i>changdu(L)) return false;	//i值不合法
+	LNode* p;	//动的指针p
+	int j = 0;	//记录p指向的是第几个结点，头结点是第0个
+	p = L;	//p从头结点开始
+	while (p != NULL && j < i - 1)	//找到第 i-1 个结点
+	{
+		p = p->next;
+		j++;
+	}
+	if (p == NULL) return false;	//p值不合法
+	if (p->next == NULL) return false;	//p结点后面没有结点
+	LNode* q = p->next;	//定义一个指针q来指向要删除的结点
+	e = q->next->data;	//用e来存储要删除的数据
+	p->next = q->next;	//p指针指向要删除的下一位，将q从链表中断开
+	free(q);	//释放结点q
+	return true;
+}
+
+/*在带头结点的链表的第i个位置插入元素e*/
+bool ListInsert(LinkList &L, int i, int e)
+{
+	if (i < 0 || i>changdu(L)) return false;
+	LNode* p = L->next;
+	for (int j = 0; j < i - 1; i++)
+	{
+		p = p->next;
+	}
+	if (p == NULL) return false;
+	LNode* s = (LNode*)malloc(sizeof(LNode));
+	if (s == NULL) return false;
+	s->data = e;
+	s->next = p->next;
+	p->next = s;
+	return true;
+}
+
+/*7、删除单链表中第一个数据值为 e 的元素*/
+//只删除第一个值为e的结点，其他的不管，成功返回1，否则为0
+//链表删除、插入操作中一定要注意减少使用p->next->next，因为如果是最后一个结点，这个就不存在！
+int DeleteFirstElem(LinkList &L, int e)
+{
+	LNode* p = L->next;
+	LNode* pre = L;
+	while (p != NULL)
+	{
+		if (p->data == e)
+		{
+			pre->next = p->next;
+			free(p);
+			return 1;
+		}
+		pre = p;
+		p = p->next;
+	}
+	return 0;
+}
+
+/*8、删除单链表中所有数据值为 ele 的元素*/
+void DeleteAllElem(LinkList L, int e)
+{
+	LNode* p = L->next;
+	LNode* pre = L;
+	while (p != NULL)
+	{
+		if (p->data == e)
+		{
+			//中间指针temp删除结点，但是这里不能用 pre->next = p->next; 来删除结点
+			//原因：p指针会因为而混乱
+			LNode* temp = p;
+			p = p->next;
+			pre->next = p;
+			free(temp);
+		}
+		else {
+			p = p->next;
+			pre = pre->next;
+		}
+	}
+}
+
+
+
+
+/*10、判断单链表是否为空IsEmpty(LinkList L)*/
+int IsEmpty(LinkList L)
+{
+	return (L->next == NULL);
+}
+
+/*11、清空单链表 Clear(LinkList L)*/
+//不能直接 L->next =NULL; 因为系统只会自动回收数组的空间，不会自动回收链表的空间
+//使用free()函数
+void Clear(LinkList &L)
+{
+	LNode* p = L->next;
+	for (int i = 0; p != NULL; i++)
+	{
+		//temp = p->next ，是 p->next ！因为我们要保证后面的数据不丢失！！
+		LNode* temp = p->next;
+		free(p);
+		p = temp;
+	}
+	//最重要的！！！将链表的头结点的next指针指向NULL
+	L->next = NULL;
+}
+
+/*12、打印单链表所有节点*/
+void print(LinkList L)
+{
+	LNode* p = L->next;
+	for (int i = 0; p != NULL; i++)
+	{
+		printf("%d", p->data);
+		//注意，有些题目中要求数据中间有空格或者逗号间隔
+		if (p->next != NULL)
+			printf(",");
+		p = p->next;
+	}
+}
+
+int main() {
+	// 声明单链表
+	LinkList L;
+
+	// 初始化单链表
+	printf("初始化单链表：\n");
+	InitList(L);
+	print(L);
+
+	// 通过头插法创建单链表
+	printf("\n通过头插法创建单链表：\n");
+	int nums1[] = { 11, 22, 33, 44, 55 };
+	int n1 = 5;
+	List_HeadInsert(L, nums1, n1);
+	print(L);
+
+	// 通过尾插法创建单链表
+	printf("\n通过尾插法创建单链表：\n");
+	int nums2[] = { 11, 22, 33, 44, 55 };
+	int n2 = 5;
+	List_TailInsert(L, nums2, n2);
+	print(L);
+
+	// 查找单链表第 i 个结点
+	printf("\n通过单链表查找第 i 个结点：\n");
+	int i = 3;
+	LNode* iNode = GetElem(L, i);
+	printf("第 %d 个结点：%d\n", i, iNode->data);
+
+	// 查找单链表中等于指定值的结点
+	printf("\n查找单链表中等于指定值的结点：\n");
+	LNode* eleNode = LocateElem(L, 33);
+	printf("eleNode 结点为：%d\n", eleNode->data);
+
+	// 在链表指定位置插入新元素
+	printf("\n在链表指定位置插入新元素：\n");
+	ListInsert(L, 1, 999);
+	print(L);
+	ListInsert(L, 4, 888);
+	print(L);
+	ListInsert(L, changdu(L), 777);
+	print(L);
+
+	// 删除链表指定位置的元素
+	printf("\n删除链表指定位置的元素：\n");
+	int e;
+	ListDelete(L, 1, e);
+	print(L);
+	ListDelete(L, 3, e);
+	print(L);
+	ListDelete(L, changdu(L), e);
+	print(L);
+
+	// 删除链表中指定值的结点，注意只会删除第一个值为它的结点
+	printf("\n删除链表中指定值的元素：\n");
+	DeleteFirstElem(L, 33);
+	print(L);
+	DeleteFirstElem(L, 777);
+	print(L);
+
+	// 删除链表中所有等于指定值的结点
+	printf("\n删除链表中所有等于指定值的节点：\n");
+	int nums3[] = { 11, 22, 11, 33, 11, 11, 44, 11 };
+	int n3 = 8;
+	List_TailInsert(L, nums3, n3);
+	DeleteAllElem(L, 11);
+	print(L);
+
+	// 链表的长度
+	printf("\n链表的长度：\n");
+	int len = changdu(L);
+	printf("%d\n", len);
+
+	// 链表是否为空
+	printf("\n链表是否为空：\n");
+	int empty = IsEmpty(L);
+	printf("%d\n", empty);
+
+	// 清空链表所有元素
+	printf("\n清空链表所有元素：\n");
+	Clear(L);
+	print(L);
+}
